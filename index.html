@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GoldenDentist — Cephalometric Tracing</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <!-- jsPDF for PDF report generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">G</div>
+      <div>
+        <h1>GoldenDentist</h1>
+        <p class="tagline">Cephalometric Tracing &amp; Analysis</p>
+      </div>
+    </div>
+
+    <nav class="topbar-actions">
+      <label class="btn btn-primary" for="image-input">
+        <span>Upload X-ray</span>
+        <input id="image-input" type="file" accept="image/*" hidden />
+      </label>
+      <button id="btn-auto-detect" class="btn btn-accent" title="Automatically place all landmarks using AI">
+        <span id="ai-spinner" class="spinner" style="display:none"></span>
+        <span id="ai-label">Auto-Trace (AI)</span>
+      </button>
+      <button id="btn-accept-suggested" class="btn" title="Accept all AI-suggested landmarks">Accept Suggested</button>
+      <button id="btn-calibrate" class="btn" title="Set scale by clicking two points and entering known distance">Calibrate</button>
+      <button id="btn-save" class="btn" title="Save current case to browser storage">Save Case</button>
+      <button id="btn-load" class="btn" title="Load saved case">Load Case</button>
+      <button id="btn-export-json" class="btn">Export JSON</button>
+      <label class="btn" for="import-json">
+        <span>Import JSON</span>
+        <input id="import-json" type="file" accept="application/json" hidden />
+      </label>
+      <button id="btn-pdf" class="btn btn-accent">Export PDF</button>
+      <button id="btn-reset" class="btn btn-danger">Reset</button>
+    </nav>
+  </header>
+
+  <main class="layout">
+    <!-- LEFT: landmarks panel -->
+    <aside class="panel panel-left">
+      <div class="panel-section">
+        <h2>Patient</h2>
+        <div class="form-row">
+          <label>Name <input id="pt-name" type="text" placeholder="Full name" /></label>
+          <label>Age <input id="pt-age" type="number" min="0" max="120" placeholder="years" /></label>
+          <label>Sex
+            <select id="pt-sex">
+              <option value="">—</option>
+              <option value="F">Female</option>
+              <option value="M">Male</option>
+            </select>
+          </label>
+          <label>Date <input id="pt-date" type="date" /></label>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-head">
+          <h2>Landmarks</h2>
+          <span class="hint" id="landmarks-progress">0 / 0</span>
+        </div>
+        <p class="muted">
+          Click a landmark in the list to place it on the image, then click on the X-ray to position it.
+          Drag a placed point to adjust. Right-click a placed point to clear it.
+        </p>
+        <ul id="landmark-list" class="landmark-list"></ul>
+      </div>
+
+      <div class="panel-section">
+        <h2>Display</h2>
+        <label class="check"><input id="toggle-tracing" type="checkbox" checked /> Show tracing lines</label>
+        <label class="check"><input id="toggle-labels" type="checkbox" checked /> Show landmark labels</label>
+        <label class="check"><input id="toggle-grid" type="checkbox" /> Show grid</label>
+        <label class="check"><input id="toggle-invert" type="checkbox" /> Invert image</label>
+        <label class="range">
+          Brightness <input id="range-brightness" type="range" min="50" max="200" value="100" />
+        </label>
+        <label class="range">
+          Contrast <input id="range-contrast" type="range" min="50" max="200" value="100" />
+        </label>
+      </div>
+    </aside>
+
+    <!-- CENTER: tracing viewport -->
+    <section class="viewport-wrap">
+      <div class="viewport-toolbar">
+        <button class="icon-btn" id="btn-zoom-in" title="Zoom in">＋</button>
+        <button class="icon-btn" id="btn-zoom-out" title="Zoom out">－</button>
+        <button class="icon-btn" id="btn-zoom-fit" title="Fit to screen">⤢</button>
+        <button class="icon-btn" id="btn-fullscreen" title="Full screen (Esc to exit)">⛶</button>
+        <span class="sep"></span>
+        <span id="zoom-readout" class="readout">100%</span>
+        <span class="sep"></span>
+        <span id="cursor-readout" class="readout">x: —, y: —</span>
+        <span class="sep"></span>
+        <span id="scale-readout" class="readout" title="Calibrated mm-per-pixel">scale: not set</span>
+        <span class="sep flex"></span>
+        <span id="active-landmark" class="readout">Active: —</span>
+        <span class="sep"></span>
+        <span id="ai-backend-readout" class="readout">AI: not initialized</span>
+      </div>
+
+      <div id="viewport" class="viewport">
+        <svg id="ceph-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <pattern id="grid-pattern" width="50" height="50" patternUnits="userSpaceOnUse">
+              <path d="M 50 0 L 0 0 0 50" fill="none" stroke="#2a3550" stroke-width="0.5" />
+            </pattern>
+          </defs>
+          <rect id="grid-rect" width="100%" height="100%" fill="url(#grid-pattern)" style="display:none" />
+          <image id="ceph-image" />
+          <g id="tracing-layer"></g>
+          <g id="landmark-layer"></g>
+          <g id="calibration-layer"></g>
+        </svg>
+
+        <div id="empty-state" class="empty-state">
+          <div class="empty-card">
+            <h3>No image loaded</h3>
+            <p>Click <strong>Upload X-ray</strong> to begin, or <strong>Import JSON</strong> to restore a case.</p>
+            <p class="muted">Tip: scroll wheel to zoom, click-and-drag empty area to pan.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: analysis panel -->
+    <aside class="panel panel-right">
+      <div class="panel-section">
+        <div class="section-head">
+          <h2>Analysis</h2>
+          <select id="analysis-select">
+            <option value="steiner">Steiner</option>
+            <option value="downs">Downs</option>
+            <option value="ricketts">Ricketts (simplified)</option>
+            <option value="mcnamara">McNamara (simplified)</option>
+            <option value="tweed">Tweed</option>
+            <option value="all">All measurements</option>
+          </select>
+        </div>
+        <p class="muted" id="analysis-description"></p>
+      </div>
+
+      <div class="panel-section">
+        <h2>Results</h2>
+        <table id="results-table" class="results">
+          <thead>
+            <tr>
+              <th>Measurement</th>
+              <th>Value</th>
+              <th>Norm</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <p id="results-empty" class="muted">Place all required landmarks to see results.</p>
+      </div>
+
+      <div class="panel-section">
+        <h2>Diagnosis Notes</h2>
+        <textarea id="notes" rows="4" placeholder="Clinical observations and plan..."></textarea>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Calibration modal -->
+  <div id="calibration-modal" class="modal hidden">
+    <div class="modal-card">
+      <h3>Calibrate Scale</h3>
+      <p>Click two reference points on the image (e.g., a 10 mm scale bar embedded in the radiograph), then enter the real-world distance in millimeters.</p>
+      <ol>
+        <li>Click <em>Pick Points</em> below.</li>
+        <li>Click point 1, then point 2 on the image.</li>
+        <li>Enter the known distance in mm and confirm.</li>
+      </ol>
+      <div class="modal-row">
+        <button id="btn-cal-pick" class="btn btn-primary">Pick Points</button>
+        <span id="cal-status" class="muted">Not started</span>
+      </div>
+      <label class="modal-row">Known distance (mm)
+        <input id="cal-mm" type="number" min="0" step="0.1" value="10" />
+      </label>
+      <div class="modal-actions">
+        <button id="btn-cal-cancel" class="btn">Cancel</button>
+        <button id="btn-cal-apply" class="btn btn-primary">Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

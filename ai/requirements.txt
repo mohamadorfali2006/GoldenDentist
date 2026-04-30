@@ -1,0 +1,9 @@
+torch>=2.1
+torchvision>=0.16
+numpy>=1.26
+pillow>=10.0
+opencv-python>=4.9
+albumentations>=1.4
+tqdm>=4.66
+onnx>=1.15
+onnxruntime>=1.17

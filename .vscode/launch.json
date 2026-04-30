@@ -1,0 +1,111 @@
+{
+    "version": "0.2.0",
+    "inputs": [
+        {
+            "id": "datasetRoot",
+            "type": "promptString",
+            "description": "Path to the Aariz dataset root (containing train/, valid/, test/)",
+            "default": "C:\\Users\\PCD\\Downloads\\Aariz\\Aariz"
+        },
+        {
+            "id": "epochs",
+            "type": "promptString",
+            "description": "Training epochs",
+            "default": "80"
+        },
+        {
+            "id": "batchSize",
+            "type": "promptString",
+            "description": "Batch size (RTX 4060 8 GB: 4 standard / 8 with AMP)",
+            "default": "4"
+        }
+    ],
+    "configurations": [
+        {
+            "name": "Check CUDA",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/ai/check_cuda.py",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Verify Aariz mapping (TRAIN, n=5)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/ai/verify_dataset.py",
+            "cwd": "${workspaceFolder}/ai",
+            "args": [
+                "--data", "${input:datasetRoot}",
+                "--split", "TRAIN",
+                "--n", "5"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Train (CUDA, full)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/ai/train.py",
+            "cwd": "${workspaceFolder}/ai",
+            "args": [
+                "--data", "${input:datasetRoot}",
+                "--epochs", "${input:epochs}",
+                "--batch", "${input:batchSize}",
+                "--device", "cuda",
+                "--amp",
+                "--workers", "4",
+                "--pos-weight", "200"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Train (CUDA, smoke 2 epochs)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/ai/train.py",
+            "cwd": "${workspaceFolder}/ai",
+            "args": [
+                "--data", "${input:datasetRoot}",
+                "--epochs", "2",
+                "--batch", "4",
+                "--device", "cuda",
+                "--amp",
+                "--workers", "4",
+                "--pos-weight", "200"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Export ONNX (best.pt -> models/ceph.onnx)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/ai/export_onnx.py",
+            "cwd": "${workspaceFolder}/ai",
+            "args": [
+                "--ckpt", "${workspaceFolder}/ai/checkpoints/best.pt",
+                "--out", "${workspaceFolder}/models/ceph.onnx"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        },
+        {
+            "name": "Eval ONNX (10 valid images)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/ai/eval_onnx.py",
+            "cwd": "${workspaceFolder}/ai",
+            "args": [
+                "--model", "${workspaceFolder}/models/ceph.onnx",
+                "--data", "${input:datasetRoot}",
+                "--num", "10"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}

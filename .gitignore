@@ -1,0 +1,19 @@
+# Python
+.venv/
+**/__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Training artifacts (large; regenerate with train.py)
+ai/checkpoints/
+ai/checkpoints_*/
+ai/verify_previews/
+ai/overlays/
+
+# ONNX model (31MB+, too large for git; regenerate via export_onnx.py)
+models/ceph.onnx
+
+# OS / editor
+.DS_Store
+Thumbs.db
+node_modules/

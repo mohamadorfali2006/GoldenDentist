@@ -1,0 +1,79 @@
+{
+    "version": "2.0.0",
+    "inputs": [
+        {
+            "id": "datasetRoot",
+            "type": "promptString",
+            "description": "Path to the Aariz dataset root",
+            "default": "C:\\Users\\PCD\\Downloads\\Aariz\\Aariz"
+        }
+    ],
+    "tasks": [
+        {
+            "label": "Setup CUDA env",
+            "type": "shell",
+            "command": ".\\setup_cuda.ps1",
+            "options": { "shell": { "executable": "powershell.exe", "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"] } },
+            "problemMatcher": [],
+            "presentation": { "reveal": "always", "panel": "dedicated" }
+        },
+        {
+            "label": "Check CUDA",
+            "type": "shell",
+            "command": "${workspaceFolder}/.venv/Scripts/python.exe ai/check_cuda.py",
+            "options": { "shell": { "executable": "powershell.exe", "args": ["-NoProfile", "-Command"] } },
+            "problemMatcher": []
+        },
+        {
+            "label": "Verify Aariz mapping",
+            "type": "shell",
+            "command": "${workspaceFolder}/.venv/Scripts/python.exe verify_dataset.py --data \"${input:datasetRoot}\" --split TRAIN --n 5",
+            "options": {
+                "cwd": "${workspaceFolder}/ai",
+                "shell": { "executable": "powershell.exe", "args": ["-NoProfile", "-Command"] }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Train (CUDA, full)",
+            "type": "shell",
+            "command": "${workspaceFolder}/.venv/Scripts/python.exe train.py --data \"${input:datasetRoot}\" --epochs 80 --batch 4 --device cuda --amp --workers 4 --pos-weight 200",
+            "options": {
+                "cwd": "${workspaceFolder}/ai",
+                "shell": { "executable": "powershell.exe", "args": ["-NoProfile", "-Command"] }
+            },
+            "presentation": { "reveal": "always", "panel": "dedicated" },
+            "problemMatcher": []
+        },
+        {
+            "label": "Train (CUDA, smoke 2 epochs)",
+            "type": "shell",
+            "command": "${workspaceFolder}/.venv/Scripts/python.exe train.py --data \"${input:datasetRoot}\" --epochs 2 --batch 4 --device cuda --amp --workers 4 --pos-weight 200",
+            "options": {
+                "cwd": "${workspaceFolder}/ai",
+                "shell": { "executable": "powershell.exe", "args": ["-NoProfile", "-Command"] }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Export ONNX",
+            "type": "shell",
+            "command": "${workspaceFolder}/.venv/Scripts/python.exe export_onnx.py --ckpt ${workspaceFolder}/ai/checkpoints/best.pt --out ${workspaceFolder}/models/ceph.onnx",
+            "options": {
+                "cwd": "${workspaceFolder}/ai",
+                "shell": { "executable": "powershell.exe", "args": ["-NoProfile", "-Command"] }
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Eval ONNX (10 valid images)",
+            "type": "shell",
+            "command": "${workspaceFolder}/.venv/Scripts/python.exe eval_onnx.py --model ${workspaceFolder}/models/ceph.onnx --data \"${input:datasetRoot}\" --num 10",
+            "options": {
+                "cwd": "${workspaceFolder}/ai",
+                "shell": { "executable": "powershell.exe", "args": ["-NoProfile", "-Command"] }
+            },
+            "problemMatcher": []
+        }
+    ]
+}

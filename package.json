@@ -1,0 +1,20 @@
+{
+  "name": "goldendentist",
+  "version": "0.1.0",
+  "description": "Web-based orthodontic cephalometric tracing & analysis tool (webCeph-style prototype).",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "serve": "python serve.py"
+  },
+  "keywords": [
+    "orthodontics",
+    "cephalometric",
+    "tracing",
+    "dental",
+    "x-ray",
+    "webceph"
+  ],
+  "license": "MIT"
+}
