@@ -2,7 +2,7 @@
 *, *::before, *::after { box-sizing: border-box; }
 html, body { height: 100%; margin: 0; }
 body {
-  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-family: ITC Avant Garde Gothic Pro, Avantgarde, Century Gothic, CenturyGothic, AppleGothic, sans-serif;
   color: #e5edff;
   background: #0b1020;
   overflow: hidden;
@@ -21,13 +21,13 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .brand { display: flex; align-items: center; gap: 12px; }
 .brand h1 { font-size: 18px; letter-spacing: 0.5px; }
 .brand .tagline { margin: 0; font-size: 12px; color: #93a4d3; }
-.logo {
-  width: 38px; height: 38px; border-radius: 10px;
-  background: linear-gradient(135deg, #d4af37 0%, #f6d36b 100%);
-  color: #1a1500; display: grid; place-items: center;
-  font-weight: 800; font-size: 20px;
-  box-shadow: 0 4px 18px rgba(212, 175, 55, 0.35);
+.Golden_logo {
+  width: 240px; height: 32px;
 }
+.analysis{
+  margin: 10px;
+}
+
 .topbar-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
 /* ----- Buttons ----- */

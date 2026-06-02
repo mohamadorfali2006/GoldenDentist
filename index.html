@@ -5,16 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GoldenDentist — Cephalometric Tracing</title>
   <link rel="stylesheet" href="css/styles.css" />
-  <!-- jsPDF for PDF report generation -->
+  <!-- jsPDF + html2canvas for PDF report generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
   <header class="topbar">
     <div class="brand">
-      <div class="logo" aria-hidden="true">G</div>
+      <div class="logo"></div>
       <div>
-        <h1>GoldenDentist</h1>
-        <p class="tagline">Cephalometric Tracing &amp; Analysis</p>
+        <img src="css/GoldenDentist-Photoroom.png" alt="GoldenDentist" class="Golden_logo" />
       </div>
     </div>
 
@@ -134,7 +134,7 @@
     <aside class="panel panel-right">
       <div class="panel-section">
         <div class="section-head">
-          <h2>Analysis</h2>
+          <h2 class="analysis">Analysis</h2>
           <select id="analysis-select">
             <option value="steiner">Steiner</option>
             <option value="downs">Downs</option>

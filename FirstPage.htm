@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orthodontic Case Analysis Report</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: ITC Avant Garde Gothic, Montserrat, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .report-container {
+            width: 794px; /* A4 Width approx */
+            height: 1123px; /* A4 Height approx */
+            background-color: #ffffff;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* --- Header Elements --- */
+        .logo {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            font-size: 32px;
+            color: #000;
+            z-index: 10;
+        }
+        .logo strong {
+            font-weight: 900;
+        }
+        .logo img {
+            width: 230px;
+            height: auto;
+        }
+
+        .class-info {
+            position: absolute;
+            top: 150px;
+            left: 0;
+            background-color: #dfb74c;
+            color: #000;
+            font-weight: 700;
+            font-size: 20px;
+            padding: 10px 30px;
+            border-top-right-radius: 25px;
+            border-bottom-right-radius: 25px;
+            z-index: 10;
+        }
+
+        /* --- Background Shapes --- */
+        .gray-shape {
+            position: absolute;
+            top: 200px;
+            left: 0;
+            width: 380px;
+            height: 180px;
+            background-color: #c1c5cd;
+            border-bottom-right-radius: 100px;
+            z-index: 1;
+        }
+
+        .yellow-card {
+            position: absolute;
+            top: 380px;
+            left: 0;
+            width: 78%; /* Extends to the right but leaves a gap */
+            height: 430px;
+            background-color: #dfb74c;
+            border-bottom-right-radius: 80px;
+            border-top-right-radius: 80px;
+            padding: 50px 40px;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* --- Yellow Card Content --- */
+        .title-section h1 {
+            color: #1a2342;
+            font-size: 42px;
+            font-weight: 900;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .title-section h2 {
+            color: #1a2342;
+            font-size: 32px;
+            font-weight: 400;
+        }
+
+        .horizontal-braces {
+            width: 100%;
+            max-width: 500px;
+            margin: 10px 0;
+            /* Placeholder styling if image is missing */
+            min-height: 80px; 
+            object-fit: contain;
+        }
+
+        .patient-info p {
+            color: #1a2342;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        /* --- Bottom Section (Notes) --- */
+        .notes-section {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 313px; /* Remaining height */
+            background-color: #3b4158;
+            padding: 50px 40px;
+            z-index: 1;
+        }
+
+        .note-row {
+            display: flex;
+            align-items: flex-end;
+            margin-bottom: 25px;
+        }
+
+        .note-label {
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: 300;
+            margin-right: 15px;
+        }
+
+        .dashed-line {
+            flex-grow: 1;
+            border-bottom: 1px dashed #ffffff;
+            height: 10px;
+        }
+
+        .dashed-line-full {
+            width: 100%;
+            border-bottom: 1px dashed #ffffff;
+            margin-bottom: 25px;
+        }
+
+        /* --- Diagonal Braces Image --- */
+        .diagonal-braces {
+            position: absolute;
+            top: -50px;
+            right: -80px;
+            width: 800px;
+            transform: rotate(15deg);
+            z-index: 5;
+            pointer-events: none; /* So it doesn't block text selection */
+        }
+        .ortho {
+            position: absolute;
+            top: -200px;
+            right: 500px;
+            width: 200px;
+            height: auto;
+            z-index: 0;
+            rotate:  30deg;
+        }
+
+        @media print {
+            body { background: white; display: block; padding: 0; }
+            .report-container { box-shadow: none; width: 100%; height: auto; }
+            .logo img { width: 180px; }
+            .report-container { margin: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="report-container">
+        <div class="ortho"><img src="css/Ultra-high-resolution_4K_enhancement_based_strictly_202605231457-Photoroom.png" alt=""></div>
+        <div class="logo"><img src="css/image-removebg-preview (7).png" alt=""></div>
+        <div class="class-info">class info</div>
+
+        <div class="gray-shape"></div>
+
+        <div class="yellow-card">
+            <div class="title-section">
+                <h1>ORTHODONTIC CASE</h1>
+                <h2>ANALYSIS REPORT</h2>
+            </div>
+            
+            <img src="css/Ultra-high-resolution_4K_enhancement_based_strictly_202605231457-Photoroom.png" class="horizontal-braces" alt="Horizontal Braces">
+
+            <div class="patient-info">
+                <p id="patientName">[Name] - [case ID]</p>
+                <p id="patientGenderAge">[Sex] - [age]</p>
+                <p id="dateCreated">[Date created]</p>
+            </div>
+        </div>
+
+        <div class="notes-section">
+            <div class="note-row">
+                <span class="note-label">Note :</span>
+                <div class="dashed-line"></div>
+            </div>
+            <div class="dashed-line-full" id="noteLine1"></div>
+            <div class="dashed-line-full" id="noteLine2"></div>
+            <div class="dashed-line-full" id="noteLine3"></div>
+            <div class="dashed-line-full" id="noteLine4"></div>
+            <div class="dashed-line-full" id="noteLine5"></div>
+            <div class="dashed-line-full" id="noteLine6"></div>
+            
+        </div>
+    </div>
+
+<script>
+    // Populate template with data (from object or URL params)
+    function populateReport(data = {}){
+        const params = new URLSearchParams(location.search);
+        const name = data.name || params.get('name') || '[Name]';
+        const caseId = data.caseId || params.get('caseId') || '[case ID]';
+        const sex = data.sex || params.get('sex') || '[Sex]';
+        const age = data.age || params.get('age') || '[age]';
+        const dateCreated = data.dateCreated || params.get('date') || '[Date created]';
+
+        const patientNameEl = document.getElementById('patientName');
+        const genderAgeEl = document.getElementById('patientGenderAge');
+        const dateEl = document.getElementById('dateCreated');
+        if(patientNameEl) patientNameEl.textContent = `${name} - ${caseId}`;
+        if(genderAgeEl) genderAgeEl.textContent = `${sex} - ${age}`;
+        if(dateEl) dateEl.textContent = dateCreated;
+
+        if(data.notes && Array.isArray(data.notes)){
+            data.notes.slice(0,6).forEach((note,i)=>{
+                const el = document.getElementById('noteLine'+(i+1)); if(el) el.textContent = note;
+            });
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', ()=>{
+        // auto-populate if URL params present
+        const p = new URLSearchParams(location.search);
+        if(p.has('name')||p.has('caseId')||p.has('sex')||p.has('age')||p.has('date')){
+            populateReport({});
+        }
+    });
+
+    // Expose API
+    window.ReportTemplate = { populateReport };
+</script>
+
+</body>
+</html>
